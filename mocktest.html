@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            margin: 0 auto;
+            font-size: 20px;
+            line-height: 60px;
+        }
+
+        td,
+        th {
+            border: 1px solid #99b0da;
+            text-align: center;
+        }
+
+        th {
+            background-color: #dde3fa;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="btn">请求</button>
+    <table>
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>姓名</th>
+                <th>生日</th>
+                <th>性别</th>
+                <th>学号</th>
+                <th>邮箱</th>
+                <th>电话</th>
+                <th>地址</th>
+            </tr>
+        </thead>
+        <tbody id="stu-body">
+        </tbody>
+    </table>
+    <script src="js/jquery-3.4.1.js"></script>
+    <script src="js/mock.js"></script>
+    <script>
+        const btn = $("#btn");
+        btn.click(function () {
+            $.ajax("http://open.duyiedu.com/api/student/findAll", {
+                type: "get",
+                data: {
+                    appkey: "longqi_1582618376307"
+                }
+            }).then(res => {
+                const resJson = JSON.parse(res)
+                console.log(resJson.data);
+                let bodyHtml = "";
+                resJson.data.forEach(item => {
+                    bodyHtml += `
+                    <tr>
+                <td>${item.id}</td>
+                <td>${item.name}</td>
+                <td>${item.birth}</td>
+                <td>${item.sex}</td>
+                <td>${item.sNo}</td>
+                <td>${item.email}</td>
+                <td>${item.phone}</td>
+                <td>${item.address}</td>
+                </tr>`;
+                });
+                $("#stu-body").html(bodyHtml);
+            })
+        })
+
+        Mock.mock(new RegExp("http://open.duyiedu.com/api/student/findAll" + "*"), "get", {
+            msg: "查询成功",
+            "data|10": [{
+                "id|+1": 100,
+                "name": "@cname",
+                "birth": "@date('yyyy')",
+                "sex|1": ['男', '女'],
+                "sNo|+1": 1000,
+                "email": "@email",
+                "phone": "@natural(13000000000,19000000000)",
+                "address": "@county(true)_@ctitle(5,10)"
+            }]
+        })
+
+        Mock.setup({
+            timeout:"2000-5000"
+        });
+        btn.click();
+
+        https://yapi.baidu.com/mock/34780/api/student/findAll?appkey=longqi_1582618376307
+        $.ajax("https://yapi.baidu.com/mock/34780/api/student/findAll2", {
+                type: "post",
+                data: {
+                    appkey: "longqi_1582618376307"
+                },
+            })
+         
+    </script>
+</body>
+
+</html>
